@@ -33,12 +33,12 @@ export class NKOJProblemParser extends Parser {
     const limitsText = elem.querySelector('#TblLimits')?.textContent || '';
     const timeMatch = limitsText.match(/时间限制\s*:\s*(\S+)/);
     const memoryMatch = limitsText.match(/空间限制\s*:\s*(\S+)/);
-    
+
     if (timeMatch) {
       const timeLimit = this.parseTimeLimit(timeMatch[1]);
       task.setTimeLimit(timeLimit);
     }
-    
+
     if (memoryMatch) {
       const memoryLimit = this.parseMemoryLimit(memoryMatch[1]);
       task.setMemoryLimit(memoryLimit);

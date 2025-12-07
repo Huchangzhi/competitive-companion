@@ -26,7 +26,7 @@ export class NKOJContestParser extends ContestParser {
 
     // Find all problem links in the contest
     const problemLinks = elem.querySelectorAll('a[href*="/Problem/Details"], a[href*="tid="]');
-    
+
     for (const link of Array.from(problemLinks)) {
       const href = link.getAttribute('href');
       if (href) {
