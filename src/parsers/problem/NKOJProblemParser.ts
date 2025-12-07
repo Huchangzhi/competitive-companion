@@ -67,10 +67,17 @@ export class NKOJProblemParser extends Parser {
     const pres = element.querySelectorAll('pre');
     if (pres.length > 0) {
       // For elements with pre tags, extract text from them
-      return [...pres].map(pre => pre.textContent.trim()).join('\n');
+      // 先获取所有pre标签的内容，然后再整体trim，这样可以保留内部换行
+      const texts = [...pres].map(pre => pre.textContent || '');
+      const combined = texts.join('\n');
+      
+      // 只去除首尾的空白字符，保留内部格式
+      const trimmed = combined.replace(/^\s+|\s+$/g, '');
+      return trimmed;
     } else {
       // Fallback to direct text content
-      return element.textContent.trim();
+      const text = element.textContent || '';
+      return text.trim();
     }
   }
 
