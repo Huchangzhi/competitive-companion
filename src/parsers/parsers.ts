@@ -51,6 +51,7 @@ import { VirtualJudgeContestParser } from './contest/VirtualJudgeContestParser';
 import { YandexContestParser } from './contest/YandexContestParser';
 import { YukicoderContestParser } from './contest/YukicoderContestParser';
 import { ZUFEOJContestParser } from './contest/ZUFEOJContestParser';
+import { NKOJContestParser } from './contest/NKOJContestParser';
 import { Parser } from './Parser';
 import { A2OnlineJudgeProblemParser } from './problem/A2OnlineJudgeProblemParser';
 import { ACMPProblemParser } from './problem/ACMPProblemParser';
@@ -161,6 +162,7 @@ import { YandexProblemParser } from './problem/YandexProblemParser';
 import { YukicoderProblemParser } from './problem/YukicoderProblemParser';
 import { ZOJProblemParser } from './problem/ZOJProblemParser';
 import { ZUFEOJProblemParser } from './problem/ZUFEOJProblemParser';
+import { NKOJProblemParser } from './problem/NKOJProblemParser';
 
 export const parsers: Parser[] = [
   new A2OnlineJudgeProblemParser(),
@@ -335,6 +337,9 @@ export const parsers: Parser[] = [
 
   new NOJProblemParser(),
   new NOJContestParser(),
+
+  new NKOJProblemParser(),
+  new NKOJContestParser(),
 
   new NowCoderProblemParser(),
 
