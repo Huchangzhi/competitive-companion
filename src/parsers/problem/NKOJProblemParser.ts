@@ -52,8 +52,8 @@ export class NKOJProblemParser extends Parser {
 
       if (!inputEl && !outputEl) break;
 
-      const input = inputEl ? this.getPreTrimmedText(inputEl) : '';
-      const output = outputEl ? this.getPreTrimmedText(outputEl) : '';
+      const input = inputEl ? this.extractSampleText(inputEl) : '';
+      const output = outputEl ? this.extractSampleText(outputEl) : '';
 
       task.addTest(input, output);
       sampleIndex++;
@@ -62,23 +62,56 @@ export class NKOJProblemParser extends Parser {
     return task.build();
   }
 
-  private getPreTrimmedText(element: Element): string {
-    // Find all pre elements inside the sample input/output div
-    const pres = element.querySelectorAll('pre');
-    if (pres.length > 0) {
-      // For elements with pre tags, extract text from them
-      // 先获取所有pre标签的内容，然后再整体trim，这样可以保留内部换行
-      const texts = [...pres].map(pre => pre.textContent || '');
-      const combined = texts.join('\n');
-      
-      // 只去除首尾的空白字符，保留内部格式
-      const trimmed = combined.replace(/^\s+|\s+$/g, '');
-      return trimmed;
-    } else {
-      // Fallback to direct text content
-      const text = element.textContent || '';
-      return text.trim();
+  private extractSampleText(element: Element): string {
+    // 方法1：尝试获取 pre 标签内的文本（如果有的话）
+    const preElement = element.querySelector('pre');
+    if (preElement) {
+      const text = preElement.textContent || '';
+      return this.normalizeText(text);
     }
+
+    // 方法2：如果是 <p> 标签包含 <br> 和 &nbsp; 的格式
+    const pElement = element.querySelector('p');
+    if (pElement) {
+      // 创建一个临时 div 来处理 HTML 内容
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = pElement.innerHTML;
+      
+      // 将 <br> 标签转换为换行符
+      const brs = tempDiv.querySelectorAll('br');
+      brs.forEach(br => {
+        br.replaceWith('\n');
+      });
+      
+      // 获取文本并规范化
+      let text = tempDiv.textContent || '';
+      
+      // 替换 HTML 实体
+      text = text.replace(/&nbsp;/g, ' ');
+      text = text.replace(/&lt;/g, '<');
+      text = text.replace(/&gt;/g, '>');
+      text = text.replace(/&amp;/g, '&');
+      
+      return this.normalizeText(text);
+    }
+
+    // 方法3：回退到普通文本提取
+    let text = element.textContent || '';
+    text = text.replace(/&nbsp;/g, ' ');
+    return this.normalizeText(text);
+  }
+
+  private normalizeText(text: string): string {
+    // 替换连续的空白字符为单个空格（除了换行符）
+    text = text.replace(/[ \t\r\f\v]+/g, ' ');
+    
+    // 规范化换行符
+    text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // 去除首尾空白
+    text = text.trim();
+    
+    return text;
   }
 
   private parseTimeLimit(timeStr: string): number {
